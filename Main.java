@@ -22,7 +22,7 @@ public class Main {
     };
 
         while (true) {
-            System.out.println("\nWählen Sie bitte ein Produkt:");
+            System.out.println("\n Wählen Sie bitte ein Produkt:");
             for (int i = 0; i < snacks.length; i++) {
                 snacks[i].KonsoleAnzeige(i+1);  // Zeigt die Snack-Liste mit Nummern an
             }
