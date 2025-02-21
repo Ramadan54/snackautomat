@@ -25,4 +25,13 @@ public class Snack {
             return false;
         }
     }
+    public String getName() {
+        return name;
+    }
+    public double getPreis() {
+        return preis;
+    }
+    public int getMenge() {
+        return menge;
+    }
 }

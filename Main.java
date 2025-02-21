@@ -5,6 +5,7 @@ public class Main {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
+        Payment payment = new Payment();
 
         System.out.println("Willkommen zu unseren Snackautomaten \n");
 
@@ -22,21 +23,32 @@ public class Main {
     };
 
         while (true) {
-            System.out.println("\n Wählen Sie bitte ein Produkt:");
+            System.out.println("\n Wähle ein bitte ein Produkt:");
             for (int i = 0; i < snacks.length; i++) {
                 snacks[i].KonsoleAnzeige(i+1);  // Zeigt die Snack-Liste mit Nummern an
             }
             System.out.println("0. Beenden");
 
-            System.out.print("Ihre Auswahl: ");
+            System.out.print("Deine Auswahl: ");
             int auswahl = scanner.nextInt();
 
             if (auswahl == 0) {
-                System.out.println("Danke für Ihren Einkauf!");
+                System.out.println("Danke für deinen Einkauf!");
                 break;
             } else if (auswahl >= 1 && auswahl <= snacks.length) {
-                if (snacks[auswahl - 1].Snackkaufen()) {
-                    System.out.println("Sie haben " + snacks[auswahl - 1].name + " gekauft.");
+                Snack gewaehlterSnack = snacks[auswahl - 1];
+
+                if (gewaehlterSnack.getMenge() > 0) {
+                    System.out.println("Sie haben " + gewaehlterSnack.getName() + " für " + gewaehlterSnack.getPreis() + " Fr. gewählt.");
+
+                    if (payment.bezahlen(gewaehlterSnack.getPreis())) {
+                        gewaehlterSnack.Snackkaufen(); // Menge reduzieren
+                        System.out.println("Auf Wiedersehen");
+                    } else {
+                        System.out.println("Zahlung fehlgeschlagen. Bitte erneut versuchen.");
+                    }
+                } else {
+                    System.out.println("Dieses Produkt ist ausverkauft.");
                 }
             } else {
                 System.out.println("Ungültige Eingabe. Bitte erneut versuchen.");
