@@ -1,1 +1,2 @@
 # snackautomat
+first test
