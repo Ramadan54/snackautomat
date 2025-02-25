@@ -31,20 +31,21 @@ public class Payment {
         }
     }
 
+    //Barzahlung
     private boolean barzahlung(double preis) {
-        double eingegebenesGeld = 0;
+        double eingegebenesGeld = 0; //Startgeld
         System.out.println("Der Preis beträgt: " + preis + " Fr.");
 
         while (eingegebenesGeld < preis) {
             System.out.print("Gib den Betrag ein: ");
 
-            if (scanner.hasNextDouble()) {  // Prüft ob Eingabe eine gültige Zahl ist
+            if (scanner.hasNextDouble()) {
                 double betrag = scanner.nextDouble();
-                if (betrag > 0) {  // Nur positive Beträge akzeptieren
+                if (betrag > 0) {  // Nur positive Zahlen akzeptieren
                     eingegebenesGeld += betrag;
                     System.out.println("Bisher eingeworfen: " + eingegebenesGeld + " Fr.");
                 } else {
-                    System.out.println("Ungültiger Betrag! Bitte eine positive Zahl eingeben.");
+                    System.out.println("Ungültiger Betrag! Bitte nochmals versuchen.");
                 }
             } else {
                 System.out.println("Fehler: Bitte eine gültige Zahl eingeben!");

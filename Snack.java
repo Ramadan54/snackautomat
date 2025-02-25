@@ -25,6 +25,7 @@ public class Snack {
             return false;
         }
     }
+    //Vefügbar machen
     public String getName() {
         return name;
     }
