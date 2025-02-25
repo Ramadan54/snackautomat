@@ -35,4 +35,8 @@ public class Snack {
     public int getMenge() {
         return menge;
     }
+    public void auffuellen(int menge) {
+        this.menge += menge;
+        System.out.println(name + " wurde um " + menge + " Einheiten aufgefüllt. Neue Menge: " + this.menge);
+    }
 }

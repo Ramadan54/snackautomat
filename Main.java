@@ -28,6 +28,7 @@ public class Main {
             for (int i = 0; i < snacks.length; i++) {
                 snacks[i].KonsoleAnzeige(i + 1);  // Zeigt die Snack-Liste mit Nummern an
             }
+            System.out.println("10. Personal: Snacks auffüllen");
             System.out.println("0. Beenden");
 
             System.out.print("Deine Auswahl: ");
@@ -35,7 +36,42 @@ public class Main {
 
             if (auswahl == 0) {
                 break;
-            } else if (auswahl >= 1 && auswahl <= snacks.length) {
+            }
+            //Snacks auffüllen
+            else if (auswahl == 10) {
+                System.out.println("Passwort eingeben: ");
+                scanner.nextLine();
+                String passwort = scanner.nextLine();
+
+                if (passwort.equals("1234")) {
+                    System.out.println("Korrektes Passwort. Welche Snacks willst du füllen?:");
+
+                    for (int i = 0; i < snacks.length; i++) {
+                        snacks[i].KonsoleAnzeige(i + 1);
+                    }
+
+                    System.out.println("Nummer des Snacks: ");
+                    int snackNummer = scanner.nextInt();
+
+                    if (snackNummer >= 1 && snackNummer <= snacks.length) {
+                        System.out.println("Wie viel soll gefüllt werden?: ");
+                        int menge = scanner.nextInt();
+
+                        if (menge > 0) {
+                            snacks[snackNummer - 1].auffuellen(menge);
+                            System.out.println("Der Snack wurde aufgefüllt");
+                        } else {
+                            System.out.println("Ungültige Menge!");
+                        }
+                    } else {
+                        System.out.println("Ungültige Snack Nummer");
+                    }
+                } else {
+                    System.out.println("Falsches Passwort");
+                }
+            }
+            //Snacks bezahlen
+            else if (auswahl >= 1 && auswahl <= snacks.length) {
                 Snack gewaehlterSnack = snacks[auswahl - 1];
 
                 if (gewaehlterSnack.getMenge() > 0) {
@@ -53,7 +89,7 @@ public class Main {
                 System.out.println("Ungültige Eingabe. Bitte erneut versuchen.");
             }
 
-            System.out.println("\nMöchtest du noch etwas kaufen? (ja/nein)");
+            System.out.println("\nSonst noch etwas? (ja/nein)");
             scanner.nextLine();
             weiterkaufen = scanner.nextLine().toLowerCase();
 
