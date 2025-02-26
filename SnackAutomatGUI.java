@@ -32,18 +32,49 @@ public class SnackAutomatGUI {
 
         // Buttons für 0-9
         for (int i = 0; i < 10; i++) {
-            JButton button = new JButton(String.valueOf(i));
-            button.addActionListener(e -> display.setText(display.getText() + button.getText()));
+            final int number = i;
+            ImageIcon icon = new ImageIcon(number + ".png");
+            Image scaledImage = icon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH); // Bildgröße anpassen
+            ImageIcon scaledIcon = new ImageIcon(scaledImage);
+
+            JButton button = new JButton(scaledIcon);
+            button.setPreferredSize(new Dimension(80, 80));
+
+            button.setBorderPainted(false);
+            button.setFocusPainted(false);
+            button.setContentAreaFilled(false);
+
+            button.addActionListener(e -> display.setText(display.getText() + number));
             panel.add(button);
         }
 
-        // OK-Button für Bestätigung
-        JButton btnOk = new JButton("OK");
+        // OK Button für Bestätigung
+        ImageIcon okIcon = new ImageIcon("Häckchen.png");
+        Image scaledOk = okIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+        ImageIcon scaledOkIcon = new ImageIcon(scaledOk);
+
+        JButton btnOk = new JButton(scaledOkIcon);
+        btnOk.setPreferredSize(new Dimension(80, 80));
+
+        btnOk.setBorderPainted(false);
+        btnOk.setFocusPainted(false);
+        btnOk.setContentAreaFilled(false);
+
         btnOk.addActionListener(e -> handleInput());
         panel.add(btnOk);
 
-        // Admin-Button für Snack-Auffüllung
-        JButton btnAdmin = new JButton("Admin");
+        // Admin Button für Snack Auffüllung
+        ImageIcon adminIcon = new ImageIcon("Staff.png");
+        Image scaledAdmin = adminIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+        ImageIcon scaledAdminIcon = new ImageIcon(scaledAdmin);
+
+        JButton btnAdmin = new JButton(scaledAdminIcon);
+        btnAdmin.setPreferredSize(new Dimension(80, 80));
+
+        btnAdmin.setBorderPainted(false);
+        btnAdmin.setFocusPainted(false);
+        btnAdmin.setContentAreaFilled(false);
+
         btnAdmin.addActionListener(e -> handleAdminLogin());
         panel.add(btnAdmin);
 
@@ -64,10 +95,10 @@ public class SnackAutomatGUI {
             } else if (auswahl >= 1 && auswahl <= snacks.length) {
                 handleSnackSelection(auswahl - 1);
             } else {
-                JOptionPane.showMessageDialog(frame, "Ungültige Eingabe!");
+                JOptionPane.showMessageDialog(frame, "Ungültige Eingabe");
             }
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(frame, "Bitte eine Zahl eingeben!");
+            JOptionPane.showMessageDialog(frame, "Bitte eine Zahl eingeben");
         }
     }
 
@@ -76,7 +107,7 @@ public class SnackAutomatGUI {
         if ("1234".equals(passwort)) {
             handleRestock();
         } else {
-            JOptionPane.showMessageDialog(frame, "Falsches Passwort!");
+            JOptionPane.showMessageDialog(frame, "Falsches Passwort");
         }
     }
 
@@ -88,7 +119,7 @@ public class SnackAutomatGUI {
                 gewaehlterSnack.Snackkaufen();
             }
         } else {
-            JOptionPane.showMessageDialog(frame, "Dieses Produkt ist ausverkauft!");
+            JOptionPane.showMessageDialog(frame, "Dieses Produkt ist ausverkauft");
         }
     }
 
@@ -100,10 +131,10 @@ public class SnackAutomatGUI {
             if (snackNummer >= 1 && snackNummer <= snacks.length && menge > 0) {
                 snacks[snackNummer - 1].auffuellen(menge);
             } else {
-                JOptionPane.showMessageDialog(frame, "Ungültige Eingabe!");
+                JOptionPane.showMessageDialog(frame, "Ungültige Eingabe");
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(frame, "Bitte eine gültige Zahl eingeben!");
+            JOptionPane.showMessageDialog(frame, "Bitte eine gültige Zahl eingeben");
         }
     }
 }
