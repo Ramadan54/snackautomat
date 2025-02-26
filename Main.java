@@ -3,8 +3,7 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
-        Payment payment = new Payment();
+        new SnackAutomatGUI();
 
         System.out.println("Willkommen zu unseren Snackautomaten \n");
 

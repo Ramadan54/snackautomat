@@ -25,7 +25,7 @@ public class Snack {
             return false;
         }
     }
-    //Vefügbar machen
+    //Vefügbar machen für Main
     public String getName() {
         return name;
     }
