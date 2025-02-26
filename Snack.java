@@ -1,3 +1,5 @@
+import javax.swing.*;
+
 public class Snack {
     String name;
     double preis;
@@ -11,32 +13,28 @@ public class Snack {
         this.menge = menge;
 
     }
-    public void KonsoleAnzeige(int index){
-        System.out.println(index + ". " + name + " - " + preis + " CHF (" + menge + " Stück verfügbar)");
-    }
 
-    public boolean Snackkaufen() {
+    public void Snackkaufen() {
         if (menge > 0) {
             menge--; //Menge reduziert
-            return true;
-
-        }else {
-            System.out.println("Dieses Produkt ist ausverkauft");
-            return false;
+            JOptionPane.showMessageDialog(null, name + " gekauft. Verbleibend: " + menge); //Ausgabe im Dialog
         }
     }
-    //Vefügbar machen für Main
+
+    //Vefügbar machen
     public String getName() {
         return name;
     }
     public double getPreis() {
         return preis;
     }
+
     public int getMenge() {
         return menge;
     }
+
     public void auffuellen(int menge) {
         this.menge += menge;
-        System.out.println(name + " wurde um " + menge + " Einheiten aufgefüllt. Neue Menge: " + this.menge);
+        JOptionPane.showMessageDialog(null, name + " aufgefüllt. Neue Menge: " + this.menge); //Ausgabe im Dialog
     }
 }

@@ -3,56 +3,107 @@ import java.awt.*;
 
 public class SnackAutomatGUI {
     private JFrame frame;
-    private JPanel panel;
     private JTextField display;
-    private JButton[] numberButtons;
+    private Snack[] snacks;
+    private Payment payment;
 
     public SnackAutomatGUI() {
-        // Hauptfenster
+        snacks = new Snack[]{
+                new Snack("Chips", 1.50, 8),
+                new Snack("Cola", 2.00, 6),
+                new Snack("Snicker", 1.20, 9),
+                new Snack("Red Bull", 2.50, 7),
+                new Snack("Kaugummi", 1.15, 11),
+                new Snack("Oreo", 3.20, 4),
+                new Snack("Twix", 1.50, 6),
+                new Snack("Capri-Sonne", 1.20, 8),
+                new Snack("Fanta", 2.00, 7)
+        };
+        payment = new Payment();
+
         frame = new JFrame("Snackautomat");
         frame.setLayout(new BorderLayout());
 
-        // Display für Benutzereingaben
         display = new JTextField();
         display.setEditable(false);
         frame.add(display, BorderLayout.NORTH);
 
-        // Panel für die Buttons
-        panel = new JPanel(new GridLayout(4, 3));
+        JPanel panel = new JPanel(new GridLayout(4, 3));
 
-        // Buttons erstellen
-        numberButtons = new JButton[10];
+        // Buttons für 0-9
         for (int i = 0; i < 10; i++) {
-            numberButtons[i] = new JButton(String.valueOf(i));
-            numberButtons[i].addActionListener(e -> {
-                display.setText(display.getText() + ((JButton) e.getSource()).getText());
-            });
-            panel.add(numberButtons[i]);
+            JButton button = new JButton(String.valueOf(i));
+            button.addActionListener(e -> display.setText(display.getText() + button.getText()));
+            panel.add(button);
         }
 
-        // OK-Button zum Bestätigen
+        // OK-Button für Bestätigung
         JButton btnOk = new JButton("OK");
         btnOk.addActionListener(e -> handleInput());
         panel.add(btnOk);
 
-        // Panel zum Hauptfenster hinzufügen
-        frame.add(panel, BorderLayout.CENTER);
+        // Admin-Button für Snack-Auffüllung
+        JButton btnAdmin = new JButton("Admin");
+        btnAdmin.addActionListener(e -> handleAdminLogin());
+        panel.add(btnAdmin);
 
-        // Fenster-Einstellungen
+        frame.add(panel, BorderLayout.CENTER);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(300, 400);
         frame.setVisible(true);
     }
 
-    //Verarbeitung der Eingabe
     private void handleInput() {
-        String eingabe = display.getText();
-        JOptionPane.showMessageDialog(frame, "Du hast gewählt: " + eingabe);
-        display.setText("");
+        try {
+            int auswahl = Integer.parseInt(display.getText());
+            display.setText("");
+
+            if (auswahl == 0) {
+                JOptionPane.showMessageDialog(frame, "Danke für deinen Einkauf!");
+                System.exit(0);
+            } else if (auswahl >= 1 && auswahl <= snacks.length) {
+                handleSnackSelection(auswahl - 1);
+            } else {
+                JOptionPane.showMessageDialog(frame, "Ungültige Eingabe!");
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(frame, "Bitte eine Zahl eingeben!");
+        }
     }
 
-    // Um GUI zu starten im Main
-    public static void main(String[] args) {
-        new SnackAutomatGUI();
+    private void handleAdminLogin() {
+        String passwort = JOptionPane.showInputDialog(frame, "Passwort eingeben:");
+        if ("1234".equals(passwort)) {
+            handleRestock();
+        } else {
+            JOptionPane.showMessageDialog(frame, "Falsches Passwort!");
+        }
+    }
+
+    private void handleSnackSelection(int index) {
+        Snack gewaehlterSnack = snacks[index];
+
+        if (gewaehlterSnack.getMenge() > 0) {
+            if (payment.bezahlen(gewaehlterSnack.getPreis())) {
+                gewaehlterSnack.Snackkaufen();
+            }
+        } else {
+            JOptionPane.showMessageDialog(frame, "Dieses Produkt ist ausverkauft!");
+        }
+    }
+
+    private void handleRestock() {
+        try {
+            int snackNummer = Integer.parseInt(JOptionPane.showInputDialog(frame, "Nummer des Snacks zum Auffüllen:"));
+            int menge = Integer.parseInt(JOptionPane.showInputDialog(frame, "Menge zum Auffüllen:"));
+
+            if (snackNummer >= 1 && snackNummer <= snacks.length && menge > 0) {
+                snacks[snackNummer - 1].auffuellen(menge);
+            } else {
+                JOptionPane.showMessageDialog(frame, "Ungültige Eingabe!");
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(frame, "Bitte eine gültige Zahl eingeben!");
+        }
     }
 }

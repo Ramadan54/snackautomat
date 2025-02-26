@@ -1,79 +1,40 @@
-import java.util.Scanner;
+import javax.swing.*;
 
 public class Payment {
-    private Scanner scanner;
-
-    public Payment() {
-        this.scanner = new Scanner(System.in);
-    }
 
     public boolean bezahlen(double preis) {
-        System.out.println("Wie möchtest du bezahlen?");
-        System.out.println("1. Bar");
-        System.out.println("2. Kreditkarte");
-        System.out.print("Deine Auswahl: ");
+        String[] optionen = {"Bar", "Kreditkarte"};
+        int zahlungsmethode = JOptionPane.showOptionDialog(null, "Wie möchtest du bezahlen?",
+                "Zahlungsmethode", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, optionen, optionen[0]);
 
-        if (!scanner.hasNextInt()) {    //Prüft ob eingabe eine Zahl ist
-            System.out.println("Fehler: Bitte geben sie eine Zahl ein!");
-            scanner.next(); //ungültige eingabe überspringen
-            return false;
-        }
-
-        int zahlungsmethode = scanner.nextInt();
-
-        if (zahlungsmethode == 1) {
+        if (zahlungsmethode == 0) {
             return barzahlung(preis);
-        } else if (zahlungsmethode == 2) {
+        } else if (zahlungsmethode == 1) {
             return kartenzahlung(preis);
-        } else {
-            System.out.println("Ungültige Auswahl. Versuche es erneut.");
-            return false;
         }
+        return false;
     }
 
-    //Barzahlung
     private boolean barzahlung(double preis) {
-        double eingegebenesGeld = 0; //Startgeld
-        System.out.println("Der Preis beträgt: " + preis + " Fr.");
+        double eingegebenesGeld = 0;
 
         while (eingegebenesGeld < preis) {
-            System.out.print("Gib den Betrag ein: ");
+            String eingabe = JOptionPane.showInputDialog("Preis: " + preis + " Fr.\nGib den Betrag ein:");
 
-            if (scanner.hasNextDouble()) {
-                double betrag = scanner.nextDouble();
-                if (betrag > 0) {  // Nur positive Zahlen akzeptieren
-                    eingegebenesGeld += betrag;
-                    System.out.println("Bisher eingeworfen: " + eingegebenesGeld + " Fr.");
-                } else {
-                    System.out.println("Ungültiger Betrag! Bitte nochmals versuchen.");
-                }
-            } else {
-                System.out.println("Fehler: Bitte eine gültige Zahl eingeben!");
-                scanner.next();  // Ungültige Eingabe überspringen
+            if (eingabe == null) return false; // Falls der Nutzer abbricht
+            try {
+                eingegebenesGeld += Double.parseDouble(eingabe);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Ungültige Eingabe!");
             }
         }
 
-        double rueckgeld = eingegebenesGeld - preis;
-        System.out.println("Erfolgreich bezahlt.");
-        if (rueckgeld > 0) {
-            System.out.println("Dein Rückgeld: " + rueckgeld + " Fr.");
-        }
+        JOptionPane.showMessageDialog(null, "Zahlung erfolgreich!");
         return true;
     }
 
     private boolean kartenzahlung(double preis) {
-        System.out.println("Zahlung mit Kreditkarte ausgewählt: ");
-        System.out.println("Bitte geben deinen 4 stelligen PIN ein: ");
-
-        int pin = scanner.nextInt(); //simoliert eine PIN eingabe
-        if (pin >= 1000 && pin <= 9999) { //Pin überprüfung ob es 4 stellig ist
-            System.out.println("Zahlung von " + preis + " Fr. erfolgreich");
-            return true;
-        }else{
-            System.out.println("Falscher PIN. Zahlung fehlgeschlagen.");
-            return false;
-        }
+        String pin = JOptionPane.showInputDialog("Bitte gib deinen 4-stelligen PIN ein:");
+        return pin != null && pin.matches("\\d{4}");
     }
-
-
 }
