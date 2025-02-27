@@ -1,6 +1,11 @@
 import javax.swing.*;
 
 public class Payment {
+    private SnackAutomatGUI gui; // 🟢 Referenz zur GUI
+
+    public Payment(SnackAutomatGUI gui) { // 🟢 Konstruktor mit GUI-Referenz
+        this.gui = gui;
+    }
 
     public boolean bezahlen(double preis) {
         String[] optionen = {"Bar", "Kreditkarte"};
@@ -21,20 +26,36 @@ public class Payment {
         while (eingegebenesGeld < preis) {
             String eingabe = JOptionPane.showInputDialog("Preis: " + preis + " Fr.\nGib den Betrag ein:");
 
-            if (eingabe == null) return false; // Falls der Nutzer abbricht
+            if (eingabe == null) return false; // Falls "Abbrechen" gedrückt wird, Zahlung abbrechen
             try {
-                eingegebenesGeld += Double.parseDouble(eingabe);
+                double betrag = Double.parseDouble(eingabe);
+
+                if (betrag > 0) { // Nur positive Beträge akzeptieren
+                    eingegebenesGeld += betrag;
+                    JOptionPane.showMessageDialog(null, "Bisher eingeworfen: " + String.format("%.2f", eingegebenesGeld) + " Fr.");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Ungültiger Betrag");
+                }
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Ungültige Eingabe!");
+                JOptionPane.showMessageDialog(null, "Bitte eine gültige Zahl eingeben!");
             }
         }
 
-        JOptionPane.showMessageDialog(null, "Zahlung erfolgreich!");
+        double rueckgeld = eingegebenesGeld - preis;
+        JOptionPane.showMessageDialog(null, "Zahlung erfolgreich!\nRückgeld: " + String.format("%.2f", rueckgeld) + " Fr.");
+
+        //Guthaben aktualisieren und anzeigen
+        gui.updateGuthaben(-preis);
         return true;
     }
 
     private boolean kartenzahlung(double preis) {
         String pin = JOptionPane.showInputDialog("Bitte gib deinen 4-stelligen PIN ein:");
-        return pin != null && pin.matches("\\d{4}");
+        if (pin != null && pin.matches("\\d{4}")) {
+            gui.updateGuthaben(-preis); //Auch bei Kartenzahlung Guthaben aktualisieren
+            return true;
+        }
+        JOptionPane.showMessageDialog(null, "Ungültige PIN!");
+        return false;
     }
 }

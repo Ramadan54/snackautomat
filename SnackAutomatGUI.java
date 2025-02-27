@@ -1,9 +1,13 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class SnackAutomatGUI {
     private JFrame frame;
     private JTextField display;
+    private JLabel guthabenLabel;
+    private double guthaben = 100.00;
     private Snack[] snacks;
     private Payment payment;
 
@@ -19,12 +23,13 @@ public class SnackAutomatGUI {
                 new Snack("Capri-Sonne", 1.20, 8),
                 new Snack("Fanta", 2.00, 7)
         };
-        payment = new Payment();
+
+        payment = new Payment(this); //GUI-Referenz
 
         frame = new JFrame("Snackautomat");
         frame.setLayout(new BorderLayout());
 
-        //Vending Machine Bild skalieren**
+        // 🟢 Vending Machine Bild
         JPanel vendingPanel = new JPanel();
         vendingPanel.setLayout(new BoxLayout(vendingPanel, BoxLayout.Y_AXIS));
 
@@ -44,7 +49,7 @@ public class SnackAutomatGUI {
         JPanel displayWrapper = new JPanel();
         displayWrapper.add(display);
 
-        //Ziffernblock enger setzen
+        //Ziffernblock
         JPanel panel = new JPanel(new GridLayout(4, 3, 0, 0));
 
         for (int i = 0; i < 10; i++) {
@@ -55,11 +60,8 @@ public class SnackAutomatGUI {
 
             JButton button = new JButton(scaledIcon);
             button.setPreferredSize(new Dimension(50, 50));
-
-            //Unsichtbare Hitboxen entfernen
             button.setMargin(new Insets(0, 0, 0, 0));
             button.setBorder(BorderFactory.createEmptyBorder());
-
             button.setFocusPainted(false);
             button.setContentAreaFilled(false);
 
@@ -76,20 +78,33 @@ public class SnackAutomatGUI {
         btnOk.setBorder(BorderFactory.createEmptyBorder());
         btnOk.setFocusPainted(false);
         btnOk.setContentAreaFilled(false);
-        btnOk.addActionListener(e -> handleInput());
+        btnOk.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleInput();
+            }
+        });
         panel.add(btnOk);
 
         //Admin-Button
         ImageIcon adminIcon = new ImageIcon("Staff.png");
         Image scaledAdmin = adminIcon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
         JButton btnAdmin = new JButton(new ImageIcon(scaledAdmin));
+
         btnAdmin.setPreferredSize(new Dimension(50, 50));
         btnAdmin.setMargin(new Insets(0, 0, 0, 0));
         btnAdmin.setBorder(BorderFactory.createEmptyBorder());
         btnAdmin.setFocusPainted(false);
         btnAdmin.setContentAreaFilled(false);
         btnAdmin.addActionListener(e -> handleAdminLogin());
+
         panel.add(btnAdmin);
+
+
+        //Guthaben-Anzeige
+        guthabenLabel = new JLabel("Guthaben: " + String.format("%.2f", guthaben) + " Fr.");
+        JPanel guthabenPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        guthabenPanel.add(guthabenLabel);
 
         //Komponenten anordnen
         keypadPanel.add(displayWrapper, BorderLayout.NORTH);
@@ -98,11 +113,12 @@ public class SnackAutomatGUI {
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(vendingPanel, BorderLayout.WEST);
         mainPanel.add(keypadPanel, BorderLayout.CENTER);
+        mainPanel.add(guthabenPanel, BorderLayout.SOUTH);
 
         frame.add(mainPanel, BorderLayout.CENTER);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(650, 450);
+        frame.setSize(650, 500);
         frame.setVisible(true);
     }
 
@@ -124,29 +140,22 @@ public class SnackAutomatGUI {
         }
     }
 
-    //Admin-Login Passwortabfrage
-    private void handleAdminLogin() {
-        String password = JOptionPane.showInputDialog(frame, "Passwort eingeben:");
+    //Guthaben aktualisieren
+    public void updateGuthaben(double betrag) {
+        guthaben += betrag;
+        guthabenLabel.setText("Guthaben: " + String.format("%.2f", guthaben) + " Fr.");
+    }
 
-        //Prüfen ob Passwort eingegeben wurde
-        if (password == null || password.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(frame, "Keine Eingabe erkannt");
-            return;
-        }
-
-        //Admin-Zugang prüfen
-        if ("1234".equals(password.trim())) {
-            JOptionPane.showMessageDialog(frame, "Admin-Modus aktiviert");
-            handleRestock();
-        } else {
-            JOptionPane.showMessageDialog(frame, "Falsches Passwort");
-        }
+    public double getGuthaben() {
+        return guthaben;
     }
 
     private void handleSnackSelection(int index) {
         Snack gewaehlterSnack = snacks[index];
 
         if (gewaehlterSnack.getMenge() > 0) {
+            JOptionPane.showMessageDialog(frame, "Du hast " + gewaehlterSnack.getName() + " für " + gewaehlterSnack.getPreis() + " Fr. gewählt.");
+
             if (payment.bezahlen(gewaehlterSnack.getPreis())) {
                 gewaehlterSnack.Snackkaufen();
             }
@@ -154,20 +163,31 @@ public class SnackAutomatGUI {
             JOptionPane.showMessageDialog(frame, "Dieses Produkt ist ausverkauft");
         }
     }
-
     private void handleRestock() {
         try {
-            int snackNummer = Integer.parseInt(JOptionPane.showInputDialog(frame, "Nummer des Snacks zum Auffüllen:"));
-            int menge = Integer.parseInt(JOptionPane.showInputDialog(frame, "Menge zum Auffüllen:"));
+            int snackNummer = Integer.parseInt(JOptionPane.showInputDialog("Nummer des Snacks zum Auffüllen:"));
+            int menge = Integer.parseInt(JOptionPane.showInputDialog("Menge zum Auffüllen:"));
 
             if (snackNummer >= 1 && snackNummer <= snacks.length && menge > 0) {
                 snacks[snackNummer - 1].auffuellen(menge);
-                JOptionPane.showMessageDialog(frame, "Snack erfolgreich aufgefüllt");
+                JOptionPane.showMessageDialog(null, "Snack erfolgreich aufgefüllt.");
             } else {
-                JOptionPane.showMessageDialog(frame, "Ungültige Eingabe");
+                JOptionPane.showMessageDialog(null, "Ungültige Eingabe!");
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(frame, "Bitte eine gültige Zahl eingeben");
+            JOptionPane.showMessageDialog(null, "Bitte eine gültige Zahl eingeben!");
+        }
+    }
+
+
+    private void handleAdminLogin() {
+        String passwort = JOptionPane.showInputDialog(null, "Passwort eingeben:");
+
+        if ("1234".equals(passwort)) {
+            JOptionPane.showMessageDialog(null, "Admin-Modus aktiviert.");
+            handleRestock();
+        } else {
+            JOptionPane.showMessageDialog(null, "Falsches Passwort!");
         }
     }
 }
