@@ -24,23 +24,42 @@ public class SnackAutomatGUI {
         frame = new JFrame("Snackautomat");
         frame.setLayout(new BorderLayout());
 
+        //Vending Machine Bild skalieren**
+        JPanel vendingPanel = new JPanel();
+        vendingPanel.setLayout(new BoxLayout(vendingPanel, BoxLayout.Y_AXIS));
+
+        ImageIcon vendingIcon = new ImageIcon("Vending Machine.png");
+        Image scaledVending = vendingIcon.getImage().getScaledInstance(-1, 400, Image.SCALE_SMOOTH);
+        JLabel vendingLabel = new JLabel(new ImageIcon(scaledVending));
+        vendingPanel.add(vendingLabel);
+
+        //Panel für den Ziffernblock
+        JPanel keypadPanel = new JPanel(new BorderLayout());
+
+        //Display über die Tasten setzen
         display = new JTextField();
         display.setEditable(false);
-        frame.add(display, BorderLayout.NORTH);
+        display.setHorizontalAlignment(JTextField.CENTER);
+        display.setPreferredSize(new Dimension(180, 50));
+        JPanel displayWrapper = new JPanel();
+        displayWrapper.add(display);
 
-        JPanel panel = new JPanel(new GridLayout(4, 3));
+        //Ziffernblock enger setzen
+        JPanel panel = new JPanel(new GridLayout(4, 3, 0, 0));
 
-        // Buttons für 0-9
         for (int i = 0; i < 10; i++) {
             final int number = i;
             ImageIcon icon = new ImageIcon(number + ".png");
-            Image scaledImage = icon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH); // Bildgröße anpassen
+            Image scaledImage = icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
             ImageIcon scaledIcon = new ImageIcon(scaledImage);
 
             JButton button = new JButton(scaledIcon);
-            button.setPreferredSize(new Dimension(80, 80));
+            button.setPreferredSize(new Dimension(50, 50));
 
-            button.setBorderPainted(false);
+            //Unsichtbare Hitboxen entfernen
+            button.setMargin(new Insets(0, 0, 0, 0));
+            button.setBorder(BorderFactory.createEmptyBorder());
+
             button.setFocusPainted(false);
             button.setContentAreaFilled(false);
 
@@ -48,39 +67,42 @@ public class SnackAutomatGUI {
             panel.add(button);
         }
 
-        // OK Button für Bestätigung
+        //OK-Button
         ImageIcon okIcon = new ImageIcon("Häckchen.png");
-        Image scaledOk = okIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
-        ImageIcon scaledOkIcon = new ImageIcon(scaledOk);
-
-        JButton btnOk = new JButton(scaledOkIcon);
-        btnOk.setPreferredSize(new Dimension(80, 80));
-
-        btnOk.setBorderPainted(false);
+        Image scaledOk = okIcon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+        JButton btnOk = new JButton(new ImageIcon(scaledOk));
+        btnOk.setPreferredSize(new Dimension(50, 50));
+        btnOk.setMargin(new Insets(0, 0, 0, 0));
+        btnOk.setBorder(BorderFactory.createEmptyBorder());
         btnOk.setFocusPainted(false);
         btnOk.setContentAreaFilled(false);
-
         btnOk.addActionListener(e -> handleInput());
         panel.add(btnOk);
 
-        // Admin Button für Snack Auffüllung
+        //Admin-Button
         ImageIcon adminIcon = new ImageIcon("Staff.png");
-        Image scaledAdmin = adminIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
-        ImageIcon scaledAdminIcon = new ImageIcon(scaledAdmin);
-
-        JButton btnAdmin = new JButton(scaledAdminIcon);
-        btnAdmin.setPreferredSize(new Dimension(80, 80));
-
-        btnAdmin.setBorderPainted(false);
+        Image scaledAdmin = adminIcon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+        JButton btnAdmin = new JButton(new ImageIcon(scaledAdmin));
+        btnAdmin.setPreferredSize(new Dimension(50, 50));
+        btnAdmin.setMargin(new Insets(0, 0, 0, 0));
+        btnAdmin.setBorder(BorderFactory.createEmptyBorder());
         btnAdmin.setFocusPainted(false);
         btnAdmin.setContentAreaFilled(false);
-
         btnAdmin.addActionListener(e -> handleAdminLogin());
         panel.add(btnAdmin);
 
-        frame.add(panel, BorderLayout.CENTER);
+        //Komponenten anordnen
+        keypadPanel.add(displayWrapper, BorderLayout.NORTH);
+        keypadPanel.add(panel, BorderLayout.CENTER);
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(vendingPanel, BorderLayout.WEST);
+        mainPanel.add(keypadPanel, BorderLayout.CENTER);
+
+        frame.add(mainPanel, BorderLayout.CENTER);
+
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(300, 400);
+        frame.setSize(650, 450);
         frame.setVisible(true);
     }
 
@@ -102,9 +124,19 @@ public class SnackAutomatGUI {
         }
     }
 
+    //Admin-Login Passwortabfrage
     private void handleAdminLogin() {
-        String passwort = JOptionPane.showInputDialog(frame, "Passwort eingeben:");
-        if ("1234".equals(passwort)) {
+        String password = JOptionPane.showInputDialog(frame, "Passwort eingeben:");
+
+        //Prüfen ob Passwort eingegeben wurde
+        if (password == null || password.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(frame, "Keine Eingabe erkannt");
+            return;
+        }
+
+        //Admin-Zugang prüfen
+        if ("1234".equals(password.trim())) {
+            JOptionPane.showMessageDialog(frame, "Admin-Modus aktiviert");
             handleRestock();
         } else {
             JOptionPane.showMessageDialog(frame, "Falsches Passwort");
@@ -130,6 +162,7 @@ public class SnackAutomatGUI {
 
             if (snackNummer >= 1 && snackNummer <= snacks.length && menge > 0) {
                 snacks[snackNummer - 1].auffuellen(menge);
+                JOptionPane.showMessageDialog(frame, "Snack erfolgreich aufgefüllt");
             } else {
                 JOptionPane.showMessageDialog(frame, "Ungültige Eingabe");
             }
