@@ -24,12 +24,12 @@ public class SnackAutomatGUI {
                 new Snack("Fanta", 2.00, 7)
         };
 
-        payment = new Payment(this); //GUI-Referenz
+        payment = new Payment(this); //GUI Referenz
 
         frame = new JFrame("Snackautomat");
         frame.setLayout(new BorderLayout());
 
-        // 🟢 Vending Machine Bild
+        //Vending Machine Bild
         JPanel vendingPanel = new JPanel();
         vendingPanel.setLayout(new BoxLayout(vendingPanel, BoxLayout.Y_AXIS));
 
@@ -79,7 +79,6 @@ public class SnackAutomatGUI {
         btnOk.setFocusPainted(false);
         btnOk.setContentAreaFilled(false);
         btnOk.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 handleInput();
             }
@@ -101,12 +100,12 @@ public class SnackAutomatGUI {
         panel.add(btnAdmin);
 
 
-        //Guthaben-Anzeige
+        //Guthaben Anzeigen
         guthabenLabel = new JLabel("Guthaben: " + String.format("%.2f", guthaben) + " Fr.");
         JPanel guthabenPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         guthabenPanel.add(guthabenLabel);
 
-        //Komponenten anordnen
+        //Anordnung der Komponenten
         keypadPanel.add(displayWrapper, BorderLayout.NORTH);
         keypadPanel.add(panel, BorderLayout.CENTER);
 
@@ -122,6 +121,7 @@ public class SnackAutomatGUI {
         frame.setVisible(true);
     }
 
+    //Produkt Auswahl
     private void handleInput() {
         try {
             int auswahl = Integer.parseInt(display.getText());
@@ -150,6 +150,7 @@ public class SnackAutomatGUI {
         return guthaben;
     }
 
+    //Anzeigen des Preises/Namen und Verfügbarkeit
     private void handleSnackSelection(int index) {
         Snack gewaehlterSnack = snacks[index];
 
@@ -163,6 +164,7 @@ public class SnackAutomatGUI {
             JOptionPane.showMessageDialog(frame, "Dieses Produkt ist ausverkauft");
         }
     }
+
     private void handleRestock() {
         try {
             int snackNummer = Integer.parseInt(JOptionPane.showInputDialog("Nummer des Snacks zum Auffüllen:"));

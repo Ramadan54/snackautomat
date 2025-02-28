@@ -1,9 +1,9 @@
 import javax.swing.*;
 
 public class Payment {
-    private SnackAutomatGUI gui; // 🟢 Referenz zur GUI
+    private SnackAutomatGUI gui; //Referenz zur GUI
 
-    public Payment(SnackAutomatGUI gui) { // 🟢 Konstruktor mit GUI-Referenz
+    public Payment(SnackAutomatGUI gui) { //Konstruktor mit GUI Referenz
         this.gui = gui;
     }
 
@@ -26,11 +26,11 @@ public class Payment {
         while (eingegebenesGeld < preis) {
             String eingabe = JOptionPane.showInputDialog("Preis: " + preis + " Fr.\nGib den Betrag ein:");
 
-            if (eingabe == null) return false; // Falls "Abbrechen" gedrückt wird, Zahlung abbrechen
+            if (eingabe == null) return false; // Falls 0 gerdückt wird Zahlung abbrechen
             try {
                 double betrag = Double.parseDouble(eingabe);
 
-                if (betrag > 0) { // Nur positive Beträge akzeptieren
+                if (betrag > 0) {
                     eingegebenesGeld += betrag;
                     JOptionPane.showMessageDialog(null, "Bisher eingeworfen: " + String.format("%.2f", eingegebenesGeld) + " Fr.");
                 } else {
@@ -51,7 +51,7 @@ public class Payment {
 
     private boolean kartenzahlung(double preis) {
         String pin = JOptionPane.showInputDialog("Bitte gib deinen 4-stelligen PIN ein:");
-        if (pin != null && pin.matches("\\d{4}")) {
+        if (pin != null && pin.matches("\\d{4}")) { //Muss vier Zahlen lang sein
             gui.updateGuthaben(-preis); //Auch bei Kartenzahlung Guthaben aktualisieren
             return true;
         }
